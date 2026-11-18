@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ส่งพลังใจให้คนเก่งหายเหนื่อยนะ 💕</title>
+    
+    <!-- โหลด Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- โหลดฟอนต์ภาษาไทยสุดละมุน Mali และ Prompt จาก Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- โหลด Font Awesome สำหรับไอคอนน่ารักๆ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- โหลด Tone.js สำหรับเสียงเอฟเฟกต์น่ารักๆ เวลาคลิก (ไม่ต้องใช้ไฟล์เสียงภายนอก) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <!-- ตั้งค่า Tailwind Theme และฟอนต์ -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'mali': ['Mali', 'cursive'],
+                        'prompt': ['Prompt', 'sans-serif'],
+                    },
+                    colors: {
+                        'pastel-pink': '#FFE4E6',
+                        'soft-pink': '#FDA4AF',
+                        'rose-sweet': '#FB7185',
+                        'warm-cream': '#FFFDF9',
+                        'peach-soft': '#FFEDD5',
+                        'peach-accent': '#FDBA74',
+                        'cocoa-text': '#5C4033',
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'heartbeat': 'heartbeat 1.5s ease-in-out infinite',
+                        'wiggle': 'wiggle 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        heartbeat: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '25%': { transform: 'scale(1.12)' },
+                            '50%': { transform: 'scale(1)' },
+                            '75%': { transform: 'scale(1.08)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-2deg)' },
+                            '50%': { transform: 'rotate(2deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* พื้นหลังลายจุดพาสเทลสุดละมุน */
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #FFFDF9;
+            background-image: radial-gradient(#FECDD3 1.5px, transparent 1.5px), radial-gradient(#FED7AA 1.5px, #FFFDF9 1.5px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: #5C4033;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-handwriting {
+            font-family: 'Mali', cursive;
+        }
+
+        /* สไตล์การ์ดโพลารอยด์ */
+        .polaroid-card {
+            background: #FFFFFF;
+            padding: 12px 12px 24px 12px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(251, 113, 133, 0.18), 0 4px 10px -2px rgba(253, 186, 116, 0.15);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid #FFF1F2;
+        }
+
+        .polaroid-card:hover {
+            transform: translateY(-8px) scale(1.03) rotate(0deg) !important;
+            box-shadow: 0 20px 35px -5px rgba(251, 113, 133, 0.3);
+            z-index: 20;
+        }
+
+        /* เทปกาวตกแต่งบนรูปโพลารอยด์ */
+        .washi-tape {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 85px;
+            height: 22px;
+            background-color: rgba(254, 205, 211, 0.85);
+            border-left: 2px dashed rgba(255, 255, 255, 0.6);
+            border-right: 2px dashed rgba(255, 255, 255, 0.6);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 10;
+            border-radius: 4px;
+        }
+
+        /* แอนิเมชันหัวใจลอยขึ้น */
+        @keyframes flyUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.6) rotate(0deg);
+            }
+            50% {
+                opacity: 0.9;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) scale(1.4) rotate(25deg);
+            }
+        }
+
+        .floating-particle {
+            position: fixed;
+            bottom: -40px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: flyUp linear forwards;
+        }
+
+        /* ซองจดหมายลับ 3D */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+
+        .letter-paper {
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* ปุ่มกดเด้งดึ๋ง */
+        .btn-bouncy {
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+        }
+        .btn-bouncy:active {
+            transform: scale(0.93);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFF1F2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FDA4AF;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-rose-200 selection:text-rose-900">
+
+    <!-- ตัวควบคุมเสียงดนตรี/เอฟเฟกต์เล็กๆ มุมขวาบน -->
+    <div class="fixed top-4 right-4 z-40">
+        <button id="soundToggleBtn" onclick="toggleSound()" class="bg-white/90 backdrop-blur-sm border-2 border-rose-200 text-rose-500 px-3.5 py-2 rounded-full shadow-md text-xs sm:text-sm font-medium flex items-center gap-2 hover:bg-rose-50 btn-bouncy">
+            <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+            <span id="soundLabel">เปิดเสียงน่ารักๆ</span>
+        </button>
+    </div>
+
+    <!-- ส่วนหัว (Header & Hero Section) -->
+    <header class="pt-12 pb-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full text-center relative">
+        <!-- ป้ายแท็กด้านบน -->
+        <div class="inline-flex items-center gap-2 bg-white/90 border border-rose-200 px-4 py-1.5 rounded-full shadow-sm mb-5 animate-float">
+            <span class="text-rose-500 text-sm">✨</span>
+            <span class="text-xs sm:text-sm font-medium text-rose-600">พื้นที่พักใจสำหรับคนเก่งของเค้า</span>
+            <span class="text-rose-500 text-sm">✨</span>
+        </div>
+
+        <!-- หัวข้อหลัก -->
+        <h1 class="text-3xl sm:text-5xl font-bold text-rose-500 leading-tight mb-3 drop-shadow-sm">
+            ส่งพลังใจให้ <span class="text-amber-600 underline decoration-wavy decoration-rose-300">ตูน</span> หายเหนื่อยนะ 💕
+        </h1>
+        <p class="text-sm sm:text-base text-cocoa-text/80 max-w-xl mx-auto mb-8 leading-relaxed">
+            ไม่ว่าวันนี้จะเจอเรื่องหนักหนา งานเยอะ หรือเรียนเหนื่อยแค่ไหน อยากให้รู้ว่ามีคนคอยเป็นกำลังใจและภูมิใจในตัวตูนเสมอเลยนะคนเก่ง 🌷
+        </p>
+
+        <!-- กล่องชาร์จแบตหัวใจ (Energy Battery Meter & Action) -->
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-rose-100 max-w-xl mx-auto relative overflow-hidden">
+            <!-- ลายตกแต่งมุมกล่อง -->
+            <div class="absolute -top-6 -left-6 w-20 h-20 bg-rose-100 rounded-full opacity-50"></div>
+            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-orange-100 rounded-full opacity-60"></div>
+
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-handwriting font-semibold text-base sm:text-lg text-rose-600 flex items-center gap-2">
+                        <i class="fa-solid fa-battery-three-quarters text-rose-500 animate-pulse"></i>
+                        ระดับพลังงานหัวใจของตูน
+                    </span>
+                    <span id="batteryPercentText" class="font-handwriting font-bold text-lg sm:text-xl text-rose-500">25%</span>
+                </div>
+
+                <!-- หลอดแบตเตอรี่ -->
+                <div class="w-full h-7 bg-rose-50 rounded-full p-1 border-2 border-rose-200 shadow-inner mb-5 overflow-hidden">
+                    <div id="batteryBar" class="h-full bg-gradient-to-r from-rose-400 via-pink-400 to-amber-300 rounded-full transition-all duration-500 flex items-center justify-end pr-2" style="width: 25%;">
+                        <span class="text-[11px] text-white font-bold drop-shadow">⚡</span>
+                    </div>
+                </div>
+
+                <!-- กล่องแสดงข้อความให้กำลังใจแบบสุ่ม -->
+                <div id="quoteBox" class="min-h-[76px] flex items-center justify-center bg-gradient-to-r from-rose-50/80 to-orange-50/80 rounded-2xl p-4 mb-6 border border-rose-100 transition-all duration-300">
+                    <p id="sweetMessage" class="font-handwriting text-base sm:text-lg text-cocoa-text font-medium">
+                        "กดปุ่มข้างล่างเพื่อรับพลังกอดและชาร์จแบตใจเร็วเข้า! 🧸💖"
+                    </p>
+                </div>
+
+                <!-- ปุ่มกดเติมพลัง -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button onclick="chargeHeart()" class="w-full sm:w-auto bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white font-handwriting font-bold text-base sm:text-lg px-7 py-3.5 rounded-2xl shadow-lg shadow-rose-200 flex items-center justify-center gap-2.5 btn-bouncy cursor-pointer">
+                        <i class="fa-solid fa-heart animate-heartbeat"></i>
+                        <span>ชาร์จแบตหัวใจ (+15%)</span>
+                    </button>
+
+                    <button onclick="sendBigHug()" class="w-full sm:w-auto bg-gradient-to-r from-amber-300 to-orange-400 hover:from-amber-400 hover:to-orange-500 text-white font-handwriting font-bold text-base sm:text-lg px-6 py-3.5 rounded-2xl shadow-lg shadow-orange-200 flex items-center justify-center gap-2 btn-bouncy cursor-pointer">
+                        <span>🤗</span>
+                        <span>รับพลังกอดแน่นๆ</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ส่วนอัลบั้มภาพความทรงจำ (Interactive Polaroid Scrapbook) -->
+    <section class="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+        <div class="text-center mb-10">
+            <span class="inline-block bg-peach-soft text-amber-700 text-xs font-semibold px-3.5 py-1 rounded-full mb-2">
+                📸 Our Sweet Memories
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-rose-500 mb-2">
+                อัลบั้มความทรงจำ... ดูทีไรก็ยิ้มได้ทุกที 🥰
+            </h2>
+            <p class="text-xs sm:text-sm text-cocoa-text/75">
+                (ลองกดที่รูปภาพแต่ละใบเพื่อดูรูปขยายใหญ่และอ่านข้อความที่เค้าแอบเขียนไว้ให้นะ)
+            </p>
+        </div>
+
+        <!-- Grid แสดงรูปโพลารอยด์ทั้ง 8 รูป -->
+        <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <!-- การ์ดรูปภาพจะถูกสร้างด้วย JavaScript เพื่อให้จัดการครบทั้ง 8 รูปและรองรับ Fallback -->
+        </div>
+    </section>
+
+    <!-- ส่วนลูกเล่น Interactive: คูปองตามใจแฟน & จดหมายลับ -->
+    <section class="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            
+            <!-- กล่องที่ 1: ตู้กดคูปองตามใจแฟน -->
+            <div class="bg-white/95 rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-orange-100 relative">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-peach-soft flex items-center justify-center text-2xl shadow-sm">
+                        🎟️
+                    </div>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-amber-600">คูปองตามใจตูน</h3>
+                        <p class="text-xs text-cocoa-text/70">เหนื่อยนักก็กดสุ่มรางวัลปลอบใจได้เลย!</p>
+                    </div>
+                </div>
+
+                <!-- พื้นที่แสดงคูปองที่สุ่มได้ -->
+                <div id="couponDisplay" class="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 border-2 border-dashed border-amber-300 rounded-2xl p-5 text-center my-5 min-h-[155px] flex flex-col items-center justify-center transition-all duration-300">
+                    <span class="text-3xl mb-2">🎁</span>
+                    <p class="font-handwriting font-semibold text-base sm:text-lg text-amber-800">
+                        พร้อมรับสิทธิ์พิเศษหรือยังคนเก่ง?
+                    </p>
+                    <p class="text-xs text-amber-600/80 mt-1">กดปุ่มด้านล่างเพื่อสุ่มคูปองฮีลใจได้เลย</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="drawCoupon()" class="flex-1 bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-white font-handwriting font-bold py-3 px-5 rounded-2xl shadow-md shadow-orange-200 flex items-center justify-center gap-2 btn-bouncy cursor-pointer">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>สุ่มคูปองตามใจแฟน</span>
+                    </button>
+                    <button id="redeemBtn" onclick="redeemCoupon()" class="hidden bg-rose-500 hover:bg-rose-600 text-white font-handwriting font-bold py-3 px-5 rounded-2xl shadow-md shadow-rose-200 items-center justify-center gap-2 btn-bouncy cursor-pointer">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>แคปจอใช้สิทธิ์นี้!</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- กล่องที่ 2: จดหมายลับ (Secret Love Letter) -->
+            <div class="bg-white/95 rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-rose-100 relative">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-pastel-pink flex items-center justify-center text-2xl shadow-sm">
+                        💌
+                    </div>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-rose-500">จดหมายลับถึงตูน</h3>
+                        <p class="text-xs text-cocoa-text/70">มีข้อความซึ้งๆ ซ่อนอยู่ในซองนี้ ลองเปิดดูสิ</p>
+                    </div>
+                </div>
+
+                <!-- ซองจดหมายแบบปิด -->
+                <div id="closedEnvelope" onclick="toggleLetter(true)" class="cursor-pointer group bg-gradient-to-br from-rose-100 via-pink-100 to-peach-soft rounded-2xl p-8 text-center border-2 border-rose-200 hover:border-rose-400 transition-all duration-300 shadow-inner my-5">
+                    <div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center shadow-md mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-envelope-open-text text-2xl text-rose-500 animate-bounce"></i>
+                    </div>
+                    <p class="font-handwriting font-bold text-lg text-rose-600 mb-1">
+                        คลิกเพื่อเปิดซองจดหมาย 💖
+                    </p>
+                    <p class="text-xs text-rose-500/80">
+                        (ส่งตรงจากใจคนข้างๆ ถึงคนเก่ง)
+                    </p>
+                </div>
+
+                <!-- เนื้อหาจดหมายเมื่อเปิดออก -->
+                <div id="openedLetter" class="hidden letter-paper bg-[#FFFDF7] rounded-2xl p-6 border-2 border-rose-200 shadow-md my-4 relative">
+                    <div class="flex justify-between items-center border-b border-rose-100 pb-3 mb-4">
+                        <span class="font-handwriting font-bold text-rose-500 text-lg">ถึง ตูน คนเก่งของเค้า 🌷</span>
+                        <button onclick="toggleLetter(false)" class="text-xs bg-rose-100 hover:bg-rose-200 text-rose-600 px-3 py-1 rounded-full font-medium transition">
+                            พับเก็บซอง
+                        </button>
+                    </div>
+                    <div class="font-handwriting text-sm sm:text-base text-cocoa-text space-y-3 leading-relaxed">
+                        <p>
+                            เค้าแค่อยากจะบอกว่า ขอบคุณที่ตั้งใจทำทุกอย่างอย่างเต็มที่มาตลอดเลยนะ ตั้งแต่สมัยเรียนชุดนักเรียน จนถึงวันที่รับปริญญา และทุกๆ วันในตอนนี้ เค้าเห็นความพยายามของตูนเสมอเลย
+                        </p>
+                        <p>
+                            ถ้าวันไหนรู้สึกเหนื่อย ท้อ หรือหนักใจ อย่าแบกไว้คนเดียวนะ หันมาหาเค้าได้ตลอด เค้าพร้อมรับฟัง พร้อมกอด และพร้อมพาไปกินของอร่อยๆ เสมอเลย
+                        </p>
+                        <p class="font-bold text-rose-500 pt-1">
+                            สู้ๆ นะคนเก่ง เค้ารักและเป็นกำลังใจให้ตูนที่สุดในโลกเลย! 💕✨
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer น่ารักๆ -->
+    <footer class="py-8 px-4 text-center text-xs sm:text-sm text-cocoa-text/70 mt-6">
+        <div class="inline-flex items-center gap-2 bg-white/80 px-5 py-2.5 rounded-full border border-rose-100 shadow-sm">
+            <span>สร้างด้วยความรักทั้งหมดที่มีให้</span>
+            <span class="font-handwriting font-bold text-rose-500">ตูน</span>
+            <i class="fa-solid fa-heart text-rose-500 animate-heartbeat"></i>
+        </div>
+    </footer>
+
+    <!-- Modal สำหรับเปิดดูรูปขยายใหญ่ (Lightbox) -->
+    <div id="photoModal" onclick="closeModal(event)" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div onclick="event.stopPropagation()" class="bg-white rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl border-4 border-rose-200 relative transform transition-all scale-100">
+            <!-- ปุ่มปิด Modal -->
+            <button onclick="closeModal()" class="absolute -top-3 -right-3 w-10 h-10 bg-rose-500 hover:bg-rose-600 text-white rounded-full shadow-lg flex items-center justify-center text-lg btn-bouncy cursor-pointer z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- รูปภาพขยายใหญ่ -->
+            <div class="rounded-2xl overflow-hidden bg-rose-50 mb-4 max-h-[62vh] flex items-center justify-center">
+                <img id="modalImage" src="" alt="ความทรงจำของเรา" class="w-full h-full object-contain max-h-[62vh]">
+            </div>
+
+            <!-- แคปชั่นและปุ่มกดส่งหัวใจให้รูปนี้ -->
+            <div class="text-center px-2">
+                <span id="modalTag" class="inline-block bg-rose-100 text-rose-600 text-xs font-semibold px-3 py-1 rounded-full mb-2"></span>
+                <h4 id="modalTitle" class="font-handwriting font-bold text-xl text-cocoa-text mb-1.5"></h4>
+                <p id="modalCaption" class="text-sm text-cocoa-text/80 leading-relaxed mb-4"></p>
+                
+                <button onclick="spawnHearts(15); playChime();" class="bg-rose-100 hover:bg-rose-200 text-rose-600 font-handwriting font-bold text-sm px-5 py-2 rounded-full inline-flex items-center gap-2 btn-bouncy cursor-pointer">
+                    <i class="fa-solid fa-heart text-rose-500"></i>
+                    <span>กดเลิฟให้ความทรงจำนี้</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- กล่องแจ้งเตือนแบบน่ารัก (Toast Notification แทน alert()) -->
+    <div id="toastBox" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform translate-y-4">
+        <div class="bg-cocoa-text text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-2.5 text-sm font-medium border-2 border-rose-300">
+            <span id="toastIcon">💖</span>
+            <span id="toastText">ข้อความแจ้งเตือน</span>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. ข้อมูลรูปภาพความทรงจำทั้ง 8 รูป
+        // ==========================================
+        const memories = [
+            {
+                src: "1269324_0.jpg",
+                tag: "สมัยเรียนมัธยม 🎒",
+                title: "ดูแลกันมาตั้งแต่เด็กเลยนะ",
+                caption: "ย้อนดูรูปนี้ทีไรก็เอ็นดูทุกที คอยดูแลใส่ใจกันมาตั้งแต่สมัยใส่ชุดนักเรียน จนถึงวันนี้ก็ยังเหมือนเดิมเลย 💕",
+                rotate: "-rotate-2",
+                tapeColor: "bg-pink-200/80"
+            },
+            {
+                src: "1269323_0.jpg",
+                tag: "วันวานยังหวานอยู่ ☀️",
+                title: "แก้มน่าบีบเหมือนเดิมเป๊ะ!",
+                caption: "ไม่ว่าจะผ่านไปกี่ปี รอยยิ้มและความน่ารักของตูนก็ยังทำให้เค้าใจฟูได้ตลอดเลยนะ ยิ้มเยอะๆ นะคนเก่ง 😊",
+                rotate: "rotate-2",
+                tapeColor: "bg-amber-200/80"
+            },
+            {
+                src: "1269329_0.jpg",
+                tag: "ความสำเร็จของคนเก่ง 🎓",
+                title: "วันรับปริญญาสุดภูมิใจ",
+                caption: "จำความรู้สึกวันที่ตูนเรียนจบได้ไหม เค้าภูมิใจในตัวตูนมากๆ เลยนะ คนเก่งของเค้าผ่านทุกอย่างมาได้เสมอแหละ ✨",
+                rotate: "-rotate-1",
+                tapeColor: "bg-rose-200/80"
+            },
+            {
+                src: "1269322_0.jpg",
+                tag: "โฟโต้บูธสุดคิวท์ 📸",
+                title: "แก๊งเราสามคนน่ารักที่สุด",
+                caption: "รวมความน่ารักไว้ในเฟรมเดียว! เวลาเหนื่อยๆ ลองมองรูปครอบครัวของเรานะ ทุกคนเป็นกำลังใจให้ตูนเสมอเลย 🥰",
+                rotate: "rotate-2",
+                tapeColor: "bg-orange-200/80"
+            },
+            {
+                src: "1269321_0.jpg",
+                tag: "มื้ออร่อยเติมพลัง 🦐",
+                title: "กองทัพต้องเดินด้วยท้อง!",
+                caption: "ทำงานเหนื่อยแล้วอย่าลืมกินของอร่อยๆ นะ เดี๋ยวเค้าพาไปกินซีฟู้ดร้านโปรดอีก เติมพลังให้เต็มที่เลย 🍽️💖",
+                rotate: "-rotate-2",
+                tapeColor: "bg-pink-200/80"
+            },
+            {
+                src: "1269326_0.jpg",
+                tag: "โหมดชาร์จแบต 😴",
+                title: "ตอนหลับยังน่ารักขนาดนี้",
+                caption: "แอบถ่ายตอนหลับปุ๋ย! ถ้าวันนี้เหนื่อยนัก คืนนี้รีบพักผ่อนนอนหลับให้เต็มอิ่มนะ เค้าจะคอยห่มผ้าให้เอง 💤🧸",
+                rotate: "rotate-1",
+                tapeColor: "bg-amber-200/80"
+            },
+            {
+                src: "1269327_0.jpg",
+                tag: "อ้อนน้องเหมียว 🐱",
+                title: "น่ารักแพ็คคู่เลยรูปนี้",
+                caption: "ทั้งคนทั้งแมวน่ารักจนใจเจ็บ! ส่งพลังความนุ่มฟูของน้องเหมียวไปช่วยฮีลใจให้ตูนหายเหนื่อยเป็นปลิดทิ้งเลยนะ 🐾",
+                rotate: "-rotate-2",
+                tapeColor: "bg-rose-200/80"
+            },
+            {
+                src: "1269328_0.jpg",
+                tag: "โหมดตลกเรียกรอยยิ้ม 💩🧡",
+                title: "ยิ้มออกหรือยังคนเก่ง?",
+                caption: "ส่งหน้าทะเล้นๆ กับหมวกสุดเฟี้ยวมาเรียกรอยยิ้ม! ห้ามทำหน้าเครียดนะ ยิ้มกว้างๆ แบบในรูปนี้เร็วเข้า ฮ่าๆ 😆✨",
+                rotate: "rotate-2",
+                tapeColor: "bg-orange-200/80"
+            }
+        ];
+
+        // ==========================================
+        // 2. ข้อความให้กำลังใจแบบสุ่ม & คูปองตามใจแฟน
+        // ==========================================
+        const sweetQuotes = [
+            "เก่งมากแล้วนะตูน วันนี้ทำเต็มที่ที่สุดแล้ว พักหายใจลึกๆ นะคนเก่ง 🌷💕",
+            "เหนื่อยไหมคนดี? มามะ เค้าส่งกอดออนไลน์ไปให้แน่นๆ เลยนะ 🤗💖",
+            "ไม่ว่างานจะหนักแค่ไหน ตูนผ่านมันไปได้แน่นอน เค้าเชื่อมั่นในตัวตูนเสมอ ✨",
+            "อย่าลืมดื่มน้ำเยอะๆ ยืดเส้นยืดสายบ้างนะ เค้าเป็นห่วงสุขภาพที่สุดเลย 🥤🧡",
+            "ถ้าวันนี้ใจมันล้า แวะมาซบไหล่เค้าได้ตลอดเวลาเลยนะ ฟรีไม่คิดตังค์! 🧸",
+            "ยิ้มหน่อยน้าาา เวลายิ้มโลกของเค้าสดใสขึ้นตั้งเยอะเลย 😊☀️",
+            "อีกนิดเดียวก็จะผ่านวันนี้ไปแล้ว สู้ๆ นะคนเก่ง เดี๋ยวพาไปกินของอร่อย! 🍰🍓",
+            "ภูมิใจในตัวตูนทุกวันเลยนะ ขอบคุณที่ตั้งใจสู้เพื่ออนาคตของเราสองคน 💕"
+        ];
+
+        const coupons = [
+            {
+                icon: "🍜",
+                title: "คูปองพาไปกินของอร่อยไม่อั้น!",
+                desc: "อยากกินชาบู หมูกระทะ หรือชานมไข่มุก บอกมาได้เลย เค้าเปย์เอง!"
+            },
+            {
+                icon: "💆‍♀️",
+                title: "คูปองนวดไหล่-นวดหลัง 30 นาที",
+                desc: "บริการนวดคลายเมื่อยระดับ VIP โดยพนักงานส่วนตัวที่รักตูนที่สุด"
+            },
+            {
+                icon: "🫂",
+                title: "คูปองกอดแน่นๆ & หอมแก้ม 10 ที",
+                desc: "ใช้ชาร์จพลังได้ทันทีที่เจอกัน ห้ามปฏิเสธเด็ดขาด!"
+            },
+            {
+                icon: "👑",
+                title: "คูปองตามใจตูน 1 วันเต็ม!",
+                desc: "วันนี้ตูนเป็นบอส อยากไปไหน อยากทำอะไร เค้าตามใจทุกอย่างเลย"
+            },
+            {
+                icon: "🚗",
+                title: "คูปองบริการรับ-ส่งถึงที่",
+                desc: "ไม่ต้องขับรถเองให้เหนื่อย เดี๋ยวสารถีส่วนตัวคนนี้ดูแลเองครับ"
+            }
+        ];
+
+        // ตัวแปรสถานะ
+        let batteryLevel = 25;
+        let currentQuoteIndex = -1;
+        let currentCoupon = null;
+        let soundEnabled = true;
+
+        // ==========================================
+        // 3. ระบบเสียงเอฟเฟกต์น่ารักๆ ด้วย Tone.js
+        // ==========================================
+        function playChime(type = 'pop') {
+            if (!soundEnabled || typeof Tone === 'undefined') return;
+            try {
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+                const synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.5 }
+                }).toDestination();
+                synth.volume.value = -10;
+
+                if (type === 'pop') {
+                    synth.triggerAttackRelease(["C5", "E5", "G5"], "16n");
+                } else if (type === 'full') {
+                    synth.triggerAttackRelease(["C5", "E5", "G5", "B5", "C6"], "8n");
+                } else if (type === 'coupon') {
+                    synth.triggerAttackRelease(["F5", "A5", "C6"], "16n");
+                }
+            } catch (e) {
+                // ข้ามหากเบราว์เซอร์บล็อกเสียงอัตโนมัติ
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            const label = document.getElementById('soundLabel');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+                label.textContent = 'เปิดเสียงน่ารักๆ';
+                playChime('pop');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-gray-400';
+                label.textContent = 'ปิดเสียงอยู่';
+            }
+        }
+
+        // ==========================================
+        // 4. ฟังก์ชันชาร์จแบตหัวใจ & หัวใจลอยฟุ้ง
+        // ==========================================
+        function chargeHeart() {
+            playChime(batteryLevel + 15 >= 100 ? 'full' : 'pop');
+            
+            batteryLevel = Math.min(100, batteryLevel + 15);
+            updateBatteryUI();
+            changeSweetQuote();
+            spawnHearts(12);
+
+            if (batteryLevel === 100) {
+                showToast("🎉", "แบตหัวใจเต็ม 100% แล้ว! คนเก่งพร้อมลุยต่อแน่นอน!");
+            }
+        }
+
+        function sendBigHug() {
+            playChime('full');
+            batteryLevel = Math.min(100, batteryLevel + 25);
+            updateBatteryUI();
+            
+            const quoteBox = document.getElementById('quoteBox');
+            const msgEl = document.getElementById('sweetMessage');
+            quoteBox.classList.add('scale-105', 'bg-rose-100');
+            msgEl.textContent = "🤗 กอดแน่นๆ นะตูน! ปล่อยความเหนื่อยทิ้งไปให้หมดเลย เค้าอยู่ตรงนี้ข้างๆ เสมอนะ 💕";
+            setTimeout(() => {
+                quoteBox.classList.remove('scale-105', 'bg-rose-100');
+            }, 300);
+
+            spawnHearts(25);
+            showToast("🤗", "ส่งพลังกอดอุ่นๆ ให้ตูนเรียบร้อยแล้ว!");
+        }
+
+        function updateBatteryUI() {
+            const bar = document.getElementById('batteryBar');
+            const text = document.getElementById('batteryPercentText');
+            bar.style.width = batteryLevel + '%';
+            text.textContent = batteryLevel + '%';
+            
+            if (batteryLevel === 100) {
+                bar.classList.remove('from-rose-400', 'via-pink-400', 'to-amber-300');
+                bar.classList.add('from-emerald-400', 'via-teal-400', 'to-rose-400');
+            }
+        }
+
+        function changeSweetQuote() {
+            let nextIndex;
+            do {
+                nextIndex = Math.floor(Math.random() * sweetQuotes.length);
+            } while (nextIndex === currentQuoteIndex && sweetQuotes.length > 1);
+            currentQuoteIndex = nextIndex;
+
+            const quoteBox = document.getElementById('quoteBox');
+            const msgEl = document.getElementById('sweetMessage');
+            
+            quoteBox.style.opacity = '0.4';
+            quoteBox.style.transform = 'scale(0.97)';
+            
+            setTimeout(() => {
+                msgEl.textContent = `"${sweetQuotes[currentQuoteIndex]}"`;
+                quoteBox.style.opacity = '1';
+                quoteBox.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        function spawnHearts(count = 10) {
+            const emojis = ['💖', '💕', '💗', '💓', '🌷', '✨', '🧸', '🧡'];
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'floating-particle';
+                    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    
+                    const startLeft = Math.random() * 92 + 4; // 4% - 96%
+                    const duration = Math.random() * 2 + 2.2; // 2.2s - 4.2s
+                    const size = Math.random() * 16 + 18; // 18px - 34px
+                    
+                    el.style.left = startLeft + 'vw';
+                    el.style.animationDuration = duration + 's';
+                    el.style.fontSize = size + 'px';
+                    
+                    document.body.appendChild(el);
+                    
+                    setTimeout(() => {
+                        el.remove();
+                    }, duration * 1000);
+                }, i * 65);
+            }
+        }
+
+        // ==========================================
+        // 5. สร้างการ์ดอัลบั้มภาพโพลารอยด์ & Modal
+        // ==========================================
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = memories.map((item, idx) => `
+                <div onclick="openModal(${idx})" class="polaroid-card relative cursor-pointer ${item.rotate} group">
+                    <!-- เทปกาวตกแต่ง -->
+                    <div class="washi-tape ${item.tapeColor}"></div>
+                    
+                    <!-- กรอบรูป -->
+                    <div class="aspect-[4/5] w-full rounded-xl overflow-hidden bg-rose-50 mb-3 relative">
+                        <img 
+                            src="${item.src}" 
+                            alt="${item.title}" 
+                            loading="lazy"
+                            onerror="this.onerror=null; this.src='https://placehold.co/400x500/FFE4E6/FB7185?text=Memory+${idx+1}';"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        >
+                        <!-- ป้ายไอคอนแว่นขยายเมื่อ hover -->
+                        <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm text-rose-500 w-8 h-8 rounded-full flex items-center justify-center shadow-sm opacity-90 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-magnifying-glass-plus text-xs"></i>
+                        </div>
+                    </div>
+
+                    <!-- ข้อความใต้รูปโพลารอยด์ -->
+                    <div class="text-center px-1">
+                        <span class="text-[11px] font-medium text-rose-400 block mb-0.5">${item.tag}</span>
+                        <h3 class="font-handwriting font-bold text-base text-cocoa-text truncate">${item.title}</h3>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(index) {
+            playChime('pop');
+            const item = memories[index];
+            const modal = document.getElementById('photoModal');
+            
+            document.getElementById('modalImage').src = item.src;
+            document.getElementById('modalTag').textContent = item.tag;
+            document.getElementById('modalTitle').textContent = item.title;
+            document.getElementById('modalCaption').textContent = item.caption;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            spawnHearts(8);
+        }
+
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            const modal = document.getElementById('photoModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // ==========================================
+        // 6. ระบบสุ่มคูปอง & เปิดซองจดหมายลับ
+        // ==========================================
+        function drawCoupon() {
+            playChime('coupon');
+            const display = document.getElementById('couponDisplay');
+            const redeemBtn = document.getElementById('redeemBtn');
+            
+            // เลือกคูปองแบบสุ่มไม่ซ้ำเดิม
+            let nextCoupon;
+            do {
+                nextCoupon = coupons[Math.floor(Math.random() * coupons.length)];
+            } while (nextCoupon === currentCoupon && coupons.length > 1);
+            currentCoupon = nextCoupon;
+
+            display.classList.add('scale-95', 'opacity-60');
+            setTimeout(() => {
+                display.innerHTML = `
+                    <span class="text-4xl mb-2 animate-bounce">${currentCoupon.icon}</span>
+                    <h4 class="font-handwriting font-bold text-lg sm:text-xl text-rose-600 mb-1">
+                        ${currentCoupon.title}
+                    </h4>
+                    <p class="text-xs sm:text-sm text-cocoa-text/85 max-w-xs">
+                        ${currentCoupon.desc}
+                    </p>
+                `;
+                display.classList.remove('scale-95', 'opacity-60');
+                redeemBtn.classList.remove('hidden');
+                redeemBtn.classList.add('flex');
+                spawnHearts(10);
+            }, 180);
+        }
+
+        function redeemCoupon() {
+            if (!currentCoupon) return;
+            playChime('full');
+            spawnHearts(20);
+            showToast("🎟️", `บันทึกสิทธิ์ "${currentCoupon.title}" แล้ว! แคปจอส่งมาทวงได้เลย 💕`);
+        }
+
+        function toggleLetter(open) {
+            playChime('pop');
+            const closedEl = document.getElementById('closedEnvelope');
+            const openedEl = document.getElementById('openedLetter');
+            
+            if (open) {
+                closedEl.classList.add('hidden');
+                openedEl.classList.remove('hidden');
+                spawnHearts(18);
+            } else {
+                openedEl.classList.add('hidden');
+                closedEl.classList.remove('hidden');
+            }
+        }
+
+        // ==========================================
+        // 7. Toast Notification
+        // ==========================================
+        let toastTimeout;
+        function showToast(icon, message) {
+            const box = document.getElementById('toastBox');
+            document.getElementById('toastIcon').textContent = icon;
+            document.getElementById('toastText').textContent = message;
+
+            box.classList.remove('opacity-0', 'translate-y-4');
+            box.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                box.classList.remove('opacity-100', 'translate-y-0');
+                box.classList.add('opacity-0', 'translate-y-4');
+            }, 3200);
+        }
+
+        // เริ่มต้นทำงานเมื่อโหลดหน้าเว็บเสร็จ
+        window.addEventListener('DOMContentLoaded', () => {
+            renderGallery();
+            // โปรยหัวใจต้อนรับเบาๆ ตอนเปิดหน้าเว็บ
+            setTimeout(() => spawnHearts(8), 500);
+        });
+    </script>
+</body>
+</html>
